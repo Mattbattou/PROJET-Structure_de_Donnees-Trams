@@ -1,7 +1,7 @@
-#ifndef CANON_H
-#define CANON_H
+#ifndef ARRET_H
+#define ARRET_H
 
-class tramway
+class arret
 {
     private:
     
