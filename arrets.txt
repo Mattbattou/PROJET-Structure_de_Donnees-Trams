@@ -1,0 +1,4 @@
+Gare;400;300;15
+Chateau;550;450;10
+Republique;500;100;20
+Campus;200;150;10
