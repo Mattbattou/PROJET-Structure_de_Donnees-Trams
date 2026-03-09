@@ -106,7 +106,6 @@ void fenetreTramway::chargerReseau() {
     }
 
     // --- CHARGEMENT DES TRAMWAYS ---
-    // ATTENTION : Vérifiez que le fichier s'appelle bien tramways.txt
     QFile fichierTrams("tramways.txt");
     if (fichierTrams.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Fichier tramways.txt ouvert avec succès.";
@@ -140,20 +139,25 @@ void fenetreTramway::chargerReseau() {
 }
 
 void fenetreTramway::tickSimulation() {
-    for (tramway* t : monReseau->getTramways()) {
-        t->mettreAjourPosition();
-        if (mapTramsVisuels.contains(t)) {
-            QGraphicsRectItem* carre = mapTramsVisuels.value(t);
+    for (tramway* tramway : monReseau -> getTramways()) {
+        tramway -> mettreAjourPosition();
+        if (mapTramsVisuels.contains(tramway)) {
+            QGraphicsRectItem* carre = mapTramsVisuels.value(tramway);
+
             int x, y;
-            if (t->getArretActuel()) {
-                x = t->getArretActuel()->getX();
-                y = t->getArretActuel()->getY();
+
+            if (tramway -> getArretActuel()) {
+                x = tramway -> getArretActuel() -> getX();
+                y = tramway -> getArretActuel() -> getY();
             } else {
-                arret *p = t->getArretPrecedent(), *s = t->getArretSuivant();
-                if (p && s && t->getDistanceTotaleSegment() > 0) {
-                    double r = (double)(t->getDistanceTotaleSegment() - t->getDistanceRestante()) / t->getDistanceTotaleSegment();
-                    x = p->getX() + (s->getX() - p->getX()) * r;
-                    y = p->getY() + (s->getY() - p->getY()) * r;
+                arret *arretPrecedant = tramway -> getArretPrecedent(), *arretSuivant = tramway -> getArretSuivant();
+
+                if (arretPrecedant && arretSuivant && tramway -> getDistanceTotaleSegment() > 0) {
+                    // Ici , pourcentageDistanceParcourue c'est le % que le tram a parcouru entre deux arrets, on l'utilise pour les petits carrés dans la simulation, on les utilise pour avoir x et y
+                    double pourcentageDistanceParcourue = (double)(tramway -> getDistanceTotaleSegment() - tramway -> getDistanceRestante()) / tramway -> getDistanceTotaleSegment();
+
+                    x = arretPrecedant -> getX() + (arretSuivant -> getX() - arretPrecedant -> getX()) * pourcentageDistanceParcourue;
+                    y = arretPrecedant -> getY() + (arretSuivant -> getY() - arretPrecedant -> getY()) * pourcentageDistanceParcourue;
                 } else continue;
             }
             carre->setRect(x - 6, y - 6, 12, 12);
