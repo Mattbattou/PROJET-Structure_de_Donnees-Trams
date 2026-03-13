@@ -8,8 +8,8 @@ fenetreTramway::fenetreTramway(QWidget *parent)
 {
     scene = new QGraphicsScene(this);
     vue = new QGraphicsView(scene);
-    scene->setSceneRect(0, 0, 800, 600);
-    vue->setRenderHint(QPainter::Antialiasing);
+    scene -> setSceneRect(0, 0, 800, 600);
+    vue -> setRenderHint(QPainter::Antialiasing); // QPainter::Antialiasing c'est pour pas que ce soit flou (de ce que j'ai compris MDRRRR)
 
     layoutBoutons = new QVBoxLayout();
     monReseau = new reseau();
@@ -18,17 +18,17 @@ fenetreTramway::fenetreTramway(QWidget *parent)
     connect(horloge, &QTimer::timeout, this, &fenetreTramway::tickSimulation);
 
     boutonSimulation = new QPushButton("▶ Démarrer Simulation", this);
-    boutonSimulation->setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;");
+    boutonSimulation -> setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;");
     connect(boutonSimulation, &QPushButton::clicked, this, &fenetreTramway::toggleSimulation);
-    layoutBoutons->addWidget(boutonSimulation);
+    layoutBoutons -> addWidget(boutonSimulation);
 
     boutonNoms = new QPushButton("Masquer les noms", this);
     connect(boutonNoms, &QPushButton::clicked, this, &fenetreTramway::toggleNomsArrets);
-    layoutBoutons->addWidget(boutonNoms);
+    layoutBoutons -> addWidget(boutonNoms);
 
     layoutPrincipal = new QHBoxLayout(this);
-    layoutPrincipal->addLayout(layoutBoutons);
-    layoutPrincipal->addWidget(vue);
+    layoutPrincipal -> addLayout(layoutBoutons);
+    layoutPrincipal -> addWidget(vue);
 
     setWindowTitle("Simulation Réseau Tramway");
     resize(950, 650);
@@ -42,24 +42,29 @@ fenetreTramway::~fenetreTramway() {
 }
 
 void fenetreTramway::chargerReseau() {
-    int rayon = 7;
+    int rayon = 7; // Rayon des cercles des arrêts
 
     // --- CHARGEMENT DES ARRÊTS ---
     QFile fichierArrets("arrets.txt");
     if (fichierArrets.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream flux(&fichierArrets);
-        while (!flux.atEnd()) {
-            QStringList infos = flux.readLine().split(";");
-            if (infos.size() == 4) {
-                arret* a = new arret(infos[0].toStdString(), infos[1].toInt(), infos[2].toInt(), infos[3].toInt());
+        while (!flux.atEnd()) { // Tant que c'est pas la fin du fichier (obvious)
+            QStringList infos = flux.readLine().split(";"); // Dans le fichie on va utiliser les ";" pour séparer les valeurs
+
+            if (infos.size() == 4) { // On compte le nombre de valeurs pour vérifier que le fichier est ordonné correctement
+                //On creéer chaque arret jusqu'à la fin
+                arret* a = new arret(infos[0].toStdString(), infos[1].toInt(), infos[2].toInt(), infos[3].toInt()); //(nom, x, y, temps d'attente à cet arret (en s)
                 indexArrets.insert(infos[0], a);
 
-                QGraphicsEllipseItem* cercle = scene->addEllipse(a->getX() - rayon, a->getY() - rayon, rayon * 2, rayon * 2, QPen(Qt::black), QBrush(Qt::white));
-                cercle->setZValue(1);
-                QGraphicsTextItem* texte = scene->addText(infos[0]);
-                texte->setPos(a->getX() + 8, a->getY() - 20);
-                texte->setZValue(2);
-                mapArretsVisuels.insert(a, {cercle, texte});
+                // Les ronds des arrets
+
+                QGraphicsEllipseItem* cercle = scene -> addEllipse(a -> getX() - rayon, a -> getY() - rayon, rayon * 2, rayon * 2, QPen(Qt::black), QBrush(Qt::white));
+                cercle -> setZValue(1); // Pour qu'il soit au premier plan (plus c'est haut plus c'est devant en prio)
+
+                QGraphicsTextItem* texte = scene -> addText(infos[0]); // Nom de l'arret
+                texte -> setPos(a -> getX() + 8, a -> getY() - 20);
+                texte -> setZValue(2);
+                mapArretsVisuels.insert(a, {cercle, texte}); // On l'ajoute pour que le bouton afficher/cacher marche
             }
         }
         fichierArrets.close();
@@ -73,11 +78,11 @@ void fenetreTramway::chargerReseau() {
             QStringList infos = flux.readLine().split(";");
             if (infos.size() >= 3) {
                 ligne* l = new ligne(infos[0].toStdString());
-                monReseau->ajouterLigne(l);
+                monReseau -> ajouterLigne(l);
 
                 QCheckBox *cb = new QCheckBox(infos[0], this);
                 cb->setChecked(true);
-                layoutBoutons->insertWidget(layoutBoutons->count() - 1, cb);
+                layoutBoutons -> insertWidget(layoutBoutons -> count() - 1, cb);
                 connect(cb, &QCheckBox::toggled, this, &fenetreTramway::toggleLigneVisibility);
 
                 QList<QGraphicsLineItem*> segments;
@@ -88,12 +93,12 @@ void fenetreTramway::chargerReseau() {
                     if (indexArrets.contains(infos[i])) {
                         arret* aCible = indexArrets.value(infos[i]);
                         arretsLigne.append(aCible);
-                        l->insererArretFin(aCible, 100);
+                        l -> insererArretFin(aCible, 100);
 
                         if (i > 2) {
                             arret* aPrec = indexArrets.value(infos[i-1]);
-                            QGraphicsLineItem* s = scene->addLine(aPrec->getX(), aPrec->getY(), aCible->getX(), aCible->getY(), pen);
-                            s->setZValue(-1);
+                            QGraphicsLineItem* s = scene -> addLine(aPrec -> getX(), aPrec -> getY(), aCible -> getX(), aCible -> getY(), pen);
+                            s -> setZValue(-1);
                             segments.append(s);
                         }
                     }
@@ -116,13 +121,13 @@ void fenetreTramway::chargerReseau() {
                 ligne* l = monReseau->chercherLigne(infos[0].toStdString());
                 if (l) {
                     tramway* t = new tramway(l, infos[1].toInt(), infos[2].toInt());
-                    monReseau->ajouterTramway(t);
+                    monReseau -> ajouterTramway(t);
 
                     arret* depart = t->getArretActuel();
                     if (depart) {
                         qDebug() << "Création graphique du tram sur la ligne" << infos[0];
-                        QGraphicsRectItem* r = scene->addRect(depart->getX()-6, depart->getY()-6, 12, 12, QPen(Qt::black), QBrush(Qt::yellow));
-                        r->setZValue(3);
+                        QGraphicsRectItem* r = scene -> addRect(depart -> getX() - 6, depart -> getY() - 6, 12, 12, QPen(Qt::black), QBrush(Qt::yellow));
+                        r -> setZValue(3);
                         mapTramsVisuels.insert(t, r);
                     } else {
                         qDebug() << "Erreur : Le tram n'a pas d'arrêt de départ sur la ligne" << infos[0];

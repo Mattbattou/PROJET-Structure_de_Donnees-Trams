@@ -47,8 +47,8 @@ private:
     void majVisibiliteArrets();
     void chargerReseau();
 
-    QGraphicsScene *scene;
-    QGraphicsView *vue;
+    QGraphicsScene *scene; // Pour l'affichage graphique a gauche des boutons
+    QGraphicsView *vue; // Pour l'affichage graphique a gauche des boutons
 
     QHBoxLayout *layoutPrincipal;
     QVBoxLayout *layoutBoutons;
@@ -62,12 +62,13 @@ private:
     reseau *monReseau;
 
     // --- Dictionnaires pour gérer l'affichage dynamique et la lecture ---
+    // Les QMap stockent les x,y de ce que j'ai compris
     QMap<QString, arret*> indexArrets;
     QMap<arret*, ArretVisuel> mapArretsVisuels;
     QMap<QCheckBox*, QList<QGraphicsLineItem*>> lignesGraphiquesMap;
     QMap<QCheckBox*, QList<arret*>> arretsParLigneMap;
 
-    // Pour lier un objet tramway logique à son petit carré graphique (pour plus tard)
+    // Pour lier un objet tramway logique à son petit carré
     QMap<tramway*, QGraphicsRectItem*> mapTramsVisuels;
 };
 #endif // FENETRETRAMWAY_H
