@@ -58,7 +58,7 @@ private:
     bool nomsVisibles;
 
     // --- Variables pour la simulation ---
-    QTimer *horloge;
+    QTimer *timer;
     reseau *monReseau;
 
     // --- Dictionnaires pour gérer l'affichage dynamique et la lecture ---

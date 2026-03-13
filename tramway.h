@@ -13,11 +13,11 @@ private:
     bool d_sensNormal;           // Sens de déplacement
 
     arret* d_arretActuel;        // Position à l'arrêt
-    int d_tempsPasseArret;       // Temps passé à l'arrêt
+    double d_tempsPasseArret;       // Temps passé à l'arrêt
 
     NoeudArret* d_maillonSuivant; // Prochain arrêt dans la liste chaînée
-    int d_distanceArretSuivant;   // Distance restante
-    int d_distTotaleSegment;      // Distance entre deux arrêts
+    double d_distanceArretSuivant;   // Distance restante
+    double d_distTotaleSegment;      // Distance entre deux arrêts
     arret* d_arretPrecedent;
 
 public:
@@ -28,8 +28,9 @@ public:
     arret* getArretActuel();
     arret* getArretSuivant();
     arret* getArretPrecedent();
-    int getDistanceRestante();
-    int getDistanceTotaleSegment();
+    double getDistanceRestante();
+    double getDistanceTotaleSegment();
+    ligne* getLigne();
 };
 
 #endif

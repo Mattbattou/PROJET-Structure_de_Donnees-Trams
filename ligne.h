@@ -17,11 +17,12 @@ class ligne
 {
 private:
     string d_nom;
+    string d_couleur;
     NoeudArret* d_premierArret;
 
 
 public:
-    ligne(string nom);
+    ligne(string nom, string couleur);
     ~ligne();
 
     // Méthodes obligatoires demandées par le projet
@@ -30,6 +31,7 @@ public:
     arret* chercherArret(string nomArret);
 
     string getNom();
+    string getCouleur();
     NoeudArret* getPremierArret();
 };
 
