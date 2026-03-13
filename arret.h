@@ -11,10 +11,8 @@ private:
     int tempsArretMinimum;       // Durée minimale d'arrêt
 
 public:
-    // Constructeur complet
     arret(std::string nom, int x, int y, int temps);
 
-    // Getters indispensables pour l'affichage et la simulation
     int getX();
     int getY();
     std::string getNom();

@@ -1,18 +1,18 @@
 #include "tramway.h"
 
-tramway::tramway(ligne* l, int vMax, int distMin)
-    : d_ligneAffectee(l), d_vitesseMax(vMax), d_distanceMinimale(distMin) {
+tramway::tramway(ligne* ligne, int vMax, int distMin)
+    : d_ligneAffectee(ligne), d_vitesseMax(vMax), d_distanceMinimale(distMin) {
     d_vitesseActuelle = 0;
     d_tempsPasseArret = 0;
     d_sensNormal = true;
 
-    if (l && l->getPremierArret()) {
-        d_arretActuel = l->getPremierArret()->station;
+    if (ligne && ligne -> getPremierArret()) {
+        d_arretActuel = ligne -> getPremierArret() -> station;
         d_arretPrecedent = d_arretActuel;
-        d_maillonSuivant = l->getPremierArret()->suivant;
+        d_maillonSuivant = ligne -> getPremierArret() -> suivant;
 
         if (d_maillonSuivant) {
-            d_distanceArretSuivant = l->getPremierArret()->distanceSuivant;
+            d_distanceArretSuivant = ligne -> getPremierArret() -> distanceSuivant;
             d_distTotaleSegment = d_distanceArretSuivant;
         }
     }
@@ -21,7 +21,7 @@ tramway::tramway(ligne* l, int vMax, int distMin)
 void tramway::mettreAjourPosition() {
     if (d_arretActuel != nullptr) {
         d_tempsPasseArret++;
-        if (d_tempsPasseArret >= d_arretActuel->getTempsArretMinimum() && d_maillonSuivant != nullptr) {
+        if (d_tempsPasseArret >= d_arretActuel -> getTempsArretMinimum() && d_maillonSuivant != nullptr) {
             d_arretPrecedent = d_arretActuel;
             d_arretActuel = nullptr;
             d_vitesseActuelle = d_vitesseMax;
