@@ -2,8 +2,9 @@
 #include <iostream>
 
 // --- Constructeur ---
-ligne::ligne(string nom) : d_nom(nom), d_premierArret(nullptr)
-{}
+ligne::ligne(string nom, string couleur) :
+    d_nom(nom), d_couleur(couleur), d_premierArret(nullptr)
+    {}
 
 // --- Destructeur ---
 ligne::~ligne()
@@ -88,4 +89,5 @@ void ligne::supprimerArret(string nomArret)
 }
 
 string ligne::getNom() { return d_nom; }
+string ligne::getCouleur() { return d_couleur; }
 NoeudArret* ligne::getPremierArret() { return d_premierArret; }

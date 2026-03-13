@@ -14,8 +14,8 @@ fenetreTramway::fenetreTramway(QWidget *parent)
     layoutBoutons = new QVBoxLayout();
     monReseau = new reseau();
 
-    horloge = new QTimer(this);
-    connect(horloge, &QTimer::timeout, this, &fenetreTramway::tickSimulation);
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &fenetreTramway::tickSimulation);
 
     boutonSimulation = new QPushButton("▶ Démarrer Simulation", this);
     boutonSimulation -> setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;");
@@ -77,7 +77,7 @@ void fenetreTramway::chargerReseau() {
         while (!flux.atEnd()) {
             QStringList infos = flux.readLine().split(";");
             if (infos.size() >= 3) {
-                ligne* l = new ligne(infos[0].toStdString());
+                ligne* l = new ligne(infos[0].toStdString(), infos[1].toStdString());
                 monReseau -> ajouterLigne(l);
 
                 QCheckBox *cb = new QCheckBox(infos[0], this);
@@ -126,8 +126,11 @@ void fenetreTramway::chargerReseau() {
                     arret* depart = t->getArretActuel();
                     if (depart) {
                         qDebug() << "Création graphique du tram sur la ligne" << infos[0];
-                        QGraphicsRectItem* r = scene -> addRect(depart -> getX() - 6, depart -> getY() - 6, 12, 12, QPen(Qt::black), QBrush(Qt::yellow));
-                        r -> setZValue(3);
+                        // On récupère la couleur de la ligne de ce tramway en QString pour Qt
+                        QString couleurLigne = QString::fromStdString(t->getLigne()->getCouleur());
+
+                        // Remplace la création de ton QGraphicsRectItem par ça :
+                        QGraphicsRectItem* r = scene->addRect(depart->getX() - 6, depart->getY() - 6, 12, 12, QPen(Qt::black), QBrush(QColor(couleurLigne)));                        r -> setZValue(3);
                         mapTramsVisuels.insert(t, r);
                     } else {
                         qDebug() << "Erreur : Le tram n'a pas d'arrêt de départ sur la ligne" << infos[0];
@@ -172,17 +175,16 @@ void fenetreTramway::tickSimulation() {
 }
 
 void fenetreTramway::toggleSimulation() {
-    if (horloge -> isActive()) { // Si la sim est lancée on l'arrete
-        horloge -> stop();
+    if (timer -> isActive()) {
+        timer -> stop();
         boutonSimulation -> setText("▶ Démarrer Simulation");
-        boutonSimulation -> setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;"); // On met le bouton en vert
-    } else { // Sinon on la démarre
-        horloge->start(1000);
+        boutonSimulation -> setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;");
+    } else {
+        timer -> start(33); // 33 ms = ~30 IPS
         boutonSimulation -> setText("⏸ Mettre en Pause");
-        boutonSimulation -> setStyleSheet("background-color: #f44336; color: white; font-weight: bold; padding: 10px;"); // On met le bouton en rouge
+        boutonSimulation -> setStyleSheet("background-color: #f44336; color: white; font-weight: bold; padding: 10px;");
     }
 }
-
 void fenetreTramway::toggleNomsArrets() {
     nomsVisibles = !nomsVisibles;
     boutonNoms -> setText(nomsVisibles ? "Masquer les noms" : "Afficher les noms");
