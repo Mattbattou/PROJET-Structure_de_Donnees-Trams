@@ -17,12 +17,10 @@ class ligne
 {
 private:
     string d_nom;
-    NoeudArret* d_premierArret; // La tête de notre liste chaînée
+    NoeudArret* d_premierArret;
 
-    // NB: Plus tard, nous ajouterons ici la liste des tramways sur cette ligne
 
 public:
-    // Constructeur et Destructeur [cite: 276]
     ligne(string nom);
     ~ligne();
 
@@ -31,7 +29,6 @@ public:
     void supprimerArret(string nomArret);
     arret* chercherArret(string nomArret);
 
-    // Getters
     string getNom();
     NoeudArret* getPremierArret();
 };

@@ -165,32 +165,32 @@ void fenetreTramway::tickSimulation() {
                     y = arretPrecedant -> getY() + (arretSuivant -> getY() - arretPrecedant -> getY()) * pourcentageDistanceParcourue;
                 } else continue;
             }
-            carre->setRect(x - 6, y - 6, 12, 12);
+            carre -> setRect(x - 6, y - 6, 12, 12);
         }
     }
     scene->update();
 }
 
 void fenetreTramway::toggleSimulation() {
-    if (horloge->isActive()) {
-        horloge->stop();
-        boutonSimulation->setText("▶ Démarrer Simulation");
-        boutonSimulation->setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;");
-    } else {
+    if (horloge -> isActive()) { // Si la sim est lancée on l'arrete
+        horloge -> stop();
+        boutonSimulation -> setText("▶ Démarrer Simulation");
+        boutonSimulation -> setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;"); // On met le bouton en vert
+    } else { // Sinon on la démarre
         horloge->start(1000);
-        boutonSimulation->setText("⏸ Mettre en Pause");
-        boutonSimulation->setStyleSheet("background-color: #f44336; color: white; font-weight: bold; padding: 10px;");
+        boutonSimulation -> setText("⏸ Mettre en Pause");
+        boutonSimulation -> setStyleSheet("background-color: #f44336; color: white; font-weight: bold; padding: 10px;"); // On met le bouton en rouge
     }
 }
 
 void fenetreTramway::toggleNomsArrets() {
     nomsVisibles = !nomsVisibles;
-    boutonNoms->setText(nomsVisibles ? "Masquer les noms" : "Afficher les noms");
+    boutonNoms -> setText(nomsVisibles ? "Masquer les noms" : "Afficher les noms");
     majVisibiliteArrets();
 }
 
 void fenetreTramway::toggleLigneVisibility(bool checked) {
-    QCheckBox *cb = qobject_cast<QCheckBox*>(sender());
+    QCheckBox *cb = qobject_cast<QCheckBox*>(sender()); // Parmi toutes les cases à cocher de l'interface, laquelle vient d'être cliquée pour déclencher cette action ?
     if (cb && lignesGraphiquesMap.contains(cb)) {
         for(auto s : lignesGraphiquesMap.value(cb)) s->setVisible(checked);
         majVisibiliteArrets();
@@ -201,11 +201,12 @@ void fenetreTramway::majVisibiliteArrets() {
     for (auto it = mapArretsVisuels.begin(); it != mapArretsVisuels.end(); ++it) {
         bool actif = false;
         for (auto itL = arretsParLigneMap.begin(); itL != arretsParLigneMap.end(); ++itL) {
-            if (itL.key()->isChecked() && itL.value().contains(it.key())) {
-                actif = true; break;
+            if (itL.key() -> isChecked() && itL.value().contains(it.key())) {
+                actif = true;
+                break;
             }
         }
-        it.value().cercle->setVisible(actif);
-        it.value().texte->setVisible(actif && nomsVisibles);
+        it.value().cercle -> setVisible(actif);
+        it.value().texte -> setVisible(actif && nomsVisibles);
     }
 }

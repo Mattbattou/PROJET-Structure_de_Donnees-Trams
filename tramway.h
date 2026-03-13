@@ -25,7 +25,6 @@ public:
 
     void mettreAjourPosition();
 
-    // Getters pour la simulation graphique
     arret* getArretActuel();
     arret* getArretSuivant();
     arret* getArretPrecedent();
