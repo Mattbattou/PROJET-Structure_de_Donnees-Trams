@@ -2,36 +2,46 @@
 Ce projet a pour objectif de développer un programme simulant un réseau de tramways de la manière la plus réaliste possible, incluant la modélisation du réseau, la simulation des déplacements et une visualisation graphique.
 
 
+# 🚋 Simulateur de Réseau de Tramways
+
+Projet de développement en C++ simulant un réseau de tramways de façon réaliste, avec affichage graphique via la bibliothèque Qt. Projet réalisé en groupe de 4 étudiants sur 6 semaines.
+
 ## 📊 État d'avancement du projet
 
 ### 🏗️ Structures de Données & Architecture
-* ✅ **Création des classes :** Architecture orientée objet en place (`reseau`, `ligne`, `arret`, `tramway`).
-* ✅ **Listes chaînées :** Implémentation réussie (et obligatoire !) pour relier les arrêts d'une ligne via une structure `NoeudArret`.
-* ✅ **Tableaux dynamiques :** Utilisation de `std::vector` pour stocker les lignes et les tramways.
-* ✅ **Méthodes fondamentales :** Constructeurs, destructeurs, insertion, suppression et recherche implémentés.
-* ✅ **Gestion de la mémoire :** Destructeurs implémentés avec libération propre des pointeurs (`delete`) pour éviter les fuites.
-* ❌ **Piles et Files :** Structures mentionnées dans les consignes, à intégrer potentiellement pour des algorithmes spécifiques.
+* ✅ **Architecture Orientée Objet :** Tout le code (sauf la boucle principale) est encapsulé dans des classes.
+* ✅ **Listes chaînées (Obligatoire) :** Implémentées pour relier les arrêts d'une ligne.
+* ✅ **Tableaux dynamiques :** Utilisés pour stocker les éléments globaux.
+* ✅ **Gestion de la mémoire :** Utilisation optimale des allocations et libérations (`delete`) pour éviter les fuites.
+* ❌ **Piles et Files :** Structures suggérées par le sujet, à intégrer si pertinent.
+* ❌ **Stockage des Trams par Ligne :** La structure de chaque Ligne DOIT contenir la liste des tramways qui y sont placés. *(Actuellement stocké uniquement dans le réseau global).*
 
-### 📂 Gestion des Fichiers
-* ✅ **Chargement des données :** Lecture fonctionnelle depuis plusieurs fichiers textes.
-* ✅ **Format modifiable :** Fichiers éditables à la main avec séparateur (`;`).
-* ✅ **Informations stockées :** Récupération réussie des données des lignes , des arrêts et des tramways.
+### 📂 Gestion des Fichiers et Console
+* ✅ **Chargement multiple :** Les informations sont chargées à partir d'un ou plusieurs fichiers.
+* ✅ **Format éditable :** Fichiers éditables facilement à la main.
+* ❌ **Menu Console (Mode Texte) :** Le programme doit démarrer par une boucle principale en mode texte.
+* ❌ **Minuteur global :** Demander à l'utilisateur la durée de la simulation via la console. La fenêtre Qt s'ouvre ensuite, puis se ferme automatiquement au bout du temps défini.
 
 ### 🎨 Interface Graphique (Qt)
-* ✅ **Mise en place de Qt :** Utilisation de `QGraphicsView` et `QGraphicsScene` pour la visualisation en temps réel.
-* ✅ **Affichage du réseau :** Dessin des arrêts (avec leurs coordonnées 2D) et des voies (segments de droite).
-* ✅ **Affichage des tramways :** Représentation visuelle des trams sous forme de petits carrés.
-* ✅ **Croisements (Facultatif) :** Masquage dynamique des lignes via `QCheckBox` avec gestion intelligente des arrêts partagés.
-* 🚧 **Détails graphiques :** Coloration automatique des carrés de tramway en fonction de la couleur de leur ligne (logique définie, intégration en cours).
+* ✅ **Affichage en temps réel :** Visualisation de la simulation avec Qt.
+* ✅ **Dessin du réseau :** Les arrêts nécessitent des coordonnées 2D, les voies sont des segments de droite.
+* ✅ **Représentation des tramways :** Représentés graphiquement par des petits carrés.
+* ✅ **Croisements (Facultatif) :** Gérer l'affichage lorsque deux lignes passent par les mêmes arrêts.
 
 ### ⚙️ Moteur de Simulation
-* ✅ **Boucle en temps réel :** Utilisation d'un `QTimer` pour l'exécution et l'affichage fluide.
-* ✅ **Logique de déplacement :** Calcul de la position 2D interpolée des tramways sur le réseau.
-* ✅ **Gestion des arrêts :** Respect de la durée minimale d'attente aux stations.
-* 🚧 **Fluidité temporelle :** Ajustement des variables (`int` vers `double`) pour supporter un affichage à 30 IPS tout en simulant des intervalles d'1 seconde.
-* ❌ **Anti-dépassement :** Garantir que les tramways ne peuvent pas se doubler.
-* ❌ **Distance de sécurité :** Implémenter le freinage/arrêt d'un tramway entre deux arrêts si la distance minimale avec celui de devant n'est pas respectée.
-* ❌ **Terminus :** Inverser le sens de déplacement des tramways lorsqu'ils atteignent la fin de la ligne
+* ✅ **Intervalle de temps :** La simulation se fait par intervalle de 1 seconde (arrêt/départ aux arrêts, déplacement).
+* ✅ **Vitesse binaire :** La vitesse des tramways est soit nulle, soit égale à sa vitesse maximale.
+* ❌ **Initialisation stricte :** Au lancement, tous les tramways doivent obligatoirement être placés aux arrêts.
+* ❌ **Données dynamiques du Tramway :** Chaque tramway doit stocker son temps passé à l'arrêt OU la distance le séparant de l'arrêt suivant, ainsi que son sens de déplacement.
+* ❌ **Distance de sécurité :** Un tramway doit s'arrêter entre deux arrêts si la distance minimale avec le tramway de devant n'est pas respectée.
+* ❌ **Anti-dépassement :** Les tramways ne peuvent en aucun cas se dépasser.
+* ❌ **Gestion des Terminus :** La direction de déplacement des tramways doit changer aux terminus.
+
+### 📝 Livrables et Évaluation (À préparer)
+* ❌ **Rapport de projet :** Doit expliquer l'interface, l'organisation du programme (avec schéma/organigramme), les choix d'organisation, et définir la contribution de chaque étudiant.
+* ❌ **Qualité du code :** Évaluation sur l'implémentation, l'optimisation des boucles et parcours de tableaux.
+* ❌ **Soutenance orale :** Présentation PowerPoint de 10 minutes + 20 minutes de questions.
+* ❌ **Démonstration :** Une démonstration du programme en direct sera exigée lors de la soutenance.
 
 ## 📋 Description du Projet
 L'application permet de charger, simuler et visualiser un réseau de transport en commun complexe. Le projet se divise en trois axes principaux :
