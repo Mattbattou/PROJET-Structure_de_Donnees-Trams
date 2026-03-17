@@ -25,6 +25,7 @@ void ligne::insererArretFin(arret* nouvelArret, int distancePrecedent)
     nouveau -> station = nouvelArret;
     nouveau -> distanceSuivant = 0; // C'est le dernier, pas de suivant pour l'instant
     nouveau -> suivant = nullptr;
+    nouveau->precedent = nullptr;
 
     // Si la ligne est vide
     if (d_premierArret == nullptr) {
@@ -40,6 +41,7 @@ void ligne::insererArretFin(arret* nouvelArret, int distancePrecedent)
         courant -> suivant = nouveau;
         // On met à jour la distance entre l'ancien dernier et le nouveau
         courant -> distanceSuivant = distancePrecedent;
+        nouveau->precedent = courant;
     }
 }
 
@@ -86,6 +88,14 @@ void ligne::supprimerArret(string nomArret)
         courant -> suivant = aSupprimer -> suivant;
         delete aSupprimer;
     }
+}
+
+void ligne::ajouterTramway(tramway* t) {
+    d_tramwaysLigne.push_back(t);
+}
+
+vector<tramway*> ligne::getTramways() {
+    return d_tramwaysLigne;
 }
 
 string ligne::getNom() { return d_nom; }

@@ -23,7 +23,7 @@ private:
 public:
     tramway(ligne* l, int vMax, int distMin);
 
-    void mettreAjourPosition();
+    void mettreAjourPosition(const std::vector<tramway*>& tousLesTrams);
 
     arret* getArretActuel();
     arret* getArretSuivant();
@@ -31,6 +31,8 @@ public:
     double getDistanceRestante();
     double getDistanceTotaleSegment();
     ligne* getLigne();
+    double calculerProgression();
+    bool getSens();
 };
 
 #endif

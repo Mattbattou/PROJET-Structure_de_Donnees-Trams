@@ -118,10 +118,12 @@ void fenetreTramway::chargerReseau() {
         while (!flux.atEnd()) {
             QStringList infos = flux.readLine().split(";");
             if (infos.size() >= 3) {
-                ligne* l = monReseau->chercherLigne(infos[0].toStdString());
-                if (l) {
-                    tramway* t = new tramway(l, infos[1].toInt(), infos[2].toInt());
+                ligne* ligne = monReseau->chercherLigne(infos[0].toStdString());
+                if (ligne) {
+                    tramway* t = new tramway(ligne, infos[1].toInt(), infos[2].toInt());
                     monReseau -> ajouterTramway(t);
+
+                    ligne -> ajouterTramway(t);
 
                     arret* depart = t->getArretActuel();
                     if (depart) {
@@ -147,8 +149,11 @@ void fenetreTramway::chargerReseau() {
 }
 
 void fenetreTramway::tickSimulation() {
-    for (tramway* tramway : monReseau -> getTramways()) {
-        tramway -> mettreAjourPosition();
+    std::vector<tramway*> listeComplete = monReseau->getTramways();
+
+    for (tramway* tramway : listeComplete) {
+        // On donne la liste complète au tramway pour qu'il calcule sa sécurité
+        tramway->mettreAjourPosition(listeComplete);
         if (mapTramsVisuels.contains(tramway)) {
             QGraphicsRectItem* carre = mapTramsVisuels.value(tramway);
 
@@ -176,13 +181,26 @@ void fenetreTramway::tickSimulation() {
 
 void fenetreTramway::toggleSimulation() {
     if (timer -> isActive()) {
+        // 1. ON MET EN PAUSE
         timer -> stop();
         boutonSimulation -> setText("▶ Démarrer Simulation");
         boutonSimulation -> setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;");
+
+        // On réactive toutes les cases à cocher
+        for (QCheckBox* cb : lignesGraphiquesMap.keys()) {
+            cb->setEnabled(true);
+        }
+
     } else {
+        // 2. ON DÉMARRE
         timer -> start(33); // 33 ms = ~30 IPS
         boutonSimulation -> setText("⏸ Mettre en Pause");
         boutonSimulation -> setStyleSheet("background-color: #f44336; color: white; font-weight: bold; padding: 10px;");
+
+        // On désactive toutes les cases à cocher (elles seront grisées)
+        for (QCheckBox* cb : lignesGraphiquesMap.keys()) {
+            cb->setEnabled(false);
+        }
     }
 }
 void fenetreTramway::toggleNomsArrets() {
