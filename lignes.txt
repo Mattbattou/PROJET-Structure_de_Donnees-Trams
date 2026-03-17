@@ -1,3 +1,5 @@
-Ligne 1 (Bleue);blue;Campus;Gare;Chateau 
-Ligne 2 (Verte);darkGreen;Republique;Gare;Mairie 
-Ligne 3 (Rouge);red;Port;Gare;Opera
+Ligne 1 (Bleue);blue;Stade;Campus;Gare;Chateau;Foret
+Ligne 2 (Verte);darkGreen;Hopital;Republique;Gare;Mairie;Centre_Co
+Ligne 3 (Rouge);red;Plage;Port;Gare;Theatre;Opera
+Ligne 4 (Cyan);darkCyan;Aeroport;Campus;Hopital;Opera
+Ligne 5 (Violette);magenta;Musee;Republique;Theatre;Mairie;Bibliotheque

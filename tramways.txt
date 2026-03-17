@@ -1,4 +1,10 @@
-Ligne 1 (Bleue);5;20 
-Ligne 2 (Verte);4;15 
+Ligne 1 (Bleue);5;20
+Ligne 1 (Bleue);6;25
+Ligne 2 (Verte);4;15
+Ligne 2 (Verte);5;20
 Ligne 3 (Rouge);6;25
-Ligne 3 (Rouge);5;20
+Ligne 3 (Rouge);6;25
+Ligne 4 (Cyan);7;30
+Ligne 4 (Cyan);5;20
+Ligne 5 (Violette);4;15
+Ligne 5 (Violette);6;20

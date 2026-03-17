@@ -1,24 +1,45 @@
 #include "tramway.h"
 #include <QDebug>
 
-tramway::tramway(ligne* ligne, int vMax, int distMin)
-    : d_ligneAffectee(ligne), d_vitesseMax(vMax), d_distanceMinimale(distMin) {
-    d_vitesseActuelle = 0;
-    d_tempsPasseArret = 0;
-    d_sensNormal = true;
+tramway::tramway(ligne* l, int vMax, int distMin, bool sensAller) {
+    d_ligneAffectee = l;
+    d_vitesseMax = vMax;
+    d_distanceMinimale = distMin;
+    d_sensInitial = sensAller; // On sauvegarde le sens de départ
 
-    if (ligne && ligne -> getPremierArret()) {
-        d_arretActuel = ligne -> getPremierArret() -> station;
-        d_arretPrecedent = d_arretActuel;
-        d_maillonSuivant = ligne -> getPremierArret() -> suivant;
-
-        if (d_maillonSuivant) {
-            d_distanceArretSuivant = ligne -> getPremierArret() -> distanceSuivant;
-            d_distTotaleSegment = d_distanceArretSuivant;
-        }
-    }
+    reinitialiser(); // On appelle la fonction de reset pour tout placer !
 }
 
+void tramway::reinitialiser() {
+    d_sensNormal = d_sensInitial;
+    d_vitesseActuelle = 0;
+    d_tempsPasseArret = 0.0;
+    d_distTotaleSegment = 0.0;
+
+    if (d_sensNormal) {
+        // --- SENS ALLER ---
+        NoeudArret* premier = d_ligneAffectee->getPremierArret();
+        if (premier != nullptr) {
+            d_arretActuel = premier->station;
+            d_arretPrecedent = premier->station;
+            d_maillonSuivant = premier->suivant;
+            if (d_maillonSuivant) d_distTotaleSegment = premier->distanceSuivant;
+        }
+    } else {
+        // --- SENS RETOUR ---
+        NoeudArret* courant = d_ligneAffectee->getPremierArret();
+        while (courant != nullptr && courant->suivant != nullptr) {
+            courant = courant->suivant;
+        }
+        if (courant != nullptr) {
+            d_arretActuel = courant->station;
+            d_arretPrecedent = courant->station;
+            d_maillonSuivant = courant->precedent;
+            if (d_maillonSuivant) d_distTotaleSegment = d_maillonSuivant->distanceSuivant;
+        }
+    }
+    d_distanceArretSuivant = d_distTotaleSegment;
+}
 void tramway::mettreAjourPosition(const std::vector<tramway*>& tousLesTrams) {
 
     // ==========================================================

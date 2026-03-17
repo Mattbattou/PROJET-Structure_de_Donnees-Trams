@@ -20,8 +20,10 @@ private:
     double d_distTotaleSegment;      // Distance entre deux arrêts
     arret* d_arretPrecedent;
 
+    bool d_sensInitial;
+
 public:
-    tramway(ligne* l, int vMax, int distMin);
+    tramway(ligne* l, int vMax, int distMin, bool sensAller = true);
 
     void mettreAjourPosition(const std::vector<tramway*>& tousLesTrams);
 
@@ -34,6 +36,8 @@ public:
     double calculerProgression();
     bool getSens();
     int getVitesseActuelle();
+
+    void reinitialiser();
 };
 
 #endif

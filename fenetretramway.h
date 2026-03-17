@@ -42,6 +42,7 @@ private slots:
     void toggleLigneVisibility(bool checked);
     void toggleSimulation(); // Pour le bouton Démarrer/Pause
     void tickSimulation();   // La fonction appelée toutes les secondes par le QTimer
+    void resetSimulation();
 
 private:
     void majVisibiliteArrets();
@@ -70,5 +71,7 @@ private:
 
     // Pour lier un objet tramway logique à son petit carré
     QMap<tramway*, QGraphicsRectItem*> mapTramsVisuels;
+
+    QPushButton* boutonReset;
 };
 #endif // FENETRETRAMWAY_H
