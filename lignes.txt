@@ -1,2 +1,3 @@
-Ligne 1 (Bleue);blue;Campus;Gare;Chateau
-Ligne 2 (Verte);darkGreen;Republique;Gare
+Ligne 1 (Bleue);blue;Campus;Gare;Chateau 
+Ligne 2 (Verte);darkGreen;Republique;Gare;Mairie 
+Ligne 3 (Rouge);red;Port;Gare;Opera

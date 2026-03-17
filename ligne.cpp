@@ -2,9 +2,9 @@
 #include <iostream>
 
 // --- Constructeur ---
-ligne::ligne(string nom, string couleur) :
-    d_nom(nom), d_couleur(couleur), d_premierArret(nullptr)
-    {}
+ligne::ligne(string nom, string couleur)
+    : d_nom(nom), d_couleur(couleur), d_premierArret(nullptr), d_estVisible(true)
+{}
 
 // --- Destructeur ---
 ligne::~ligne()
@@ -96,6 +96,14 @@ void ligne::ajouterTramway(tramway* t) {
 
 vector<tramway*> ligne::getTramways() {
     return d_tramwaysLigne;
+}
+
+void ligne::setVisible(bool visible) {
+    d_estVisible = visible;
+}
+
+bool ligne::estVisible() {
+    return d_estVisible;
 }
 
 string ligne::getNom() { return d_nom; }

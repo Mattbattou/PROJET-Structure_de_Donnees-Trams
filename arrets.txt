@@ -1,4 +1,7 @@
-Gare;400;300;15
-Chateau;550;450;10
-Republique;500;100;20
-Campus;200;150;10
+Gare;400;300;15 
+Chateau;550;450;10 
+Republique;500;100;20 
+Campus;200;150;10 
+Mairie;650;250;12
+Port;100;400;18
+Opera;700;50;10

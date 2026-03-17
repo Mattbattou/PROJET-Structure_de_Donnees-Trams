@@ -33,6 +33,7 @@ public:
     ligne* getLigne();
     double calculerProgression();
     bool getSens();
+    int getVitesseActuelle();
 };
 
 #endif

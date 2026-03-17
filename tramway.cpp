@@ -190,3 +190,4 @@ arret* tramway::getArretPrecedent() { return d_arretPrecedent; }
 double tramway::getDistanceRestante() { return d_distanceArretSuivant; }
 double tramway::getDistanceTotaleSegment() { return d_distTotaleSegment; }
 ligne* tramway::getLigne() { return d_ligneAffectee; }
+int tramway::getVitesseActuelle() { return d_vitesseActuelle; }

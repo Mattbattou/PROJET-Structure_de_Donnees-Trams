@@ -24,6 +24,7 @@ private:
     string d_couleur;
     NoeudArret* d_premierArret;
     vector<tramway*> d_tramwaysLigne;
+    bool d_estVisible;
 
 
 public:
@@ -41,6 +42,9 @@ public:
 
     void ajouterTramway(tramway* t);
     vector<tramway*> getTramways();
+
+    void setVisible(bool visible);
+    bool estVisible();
 };
 
 #endif

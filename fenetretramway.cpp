@@ -2,37 +2,55 @@
 #include <QBrush>
 #include <QPen>
 #include <QDebug>
+#include <QLabel>
 
 fenetreTramway::fenetreTramway(QWidget *parent)
     : QWidget(parent), nomsVisibles(true)
 {
     scene = new QGraphicsScene(this);
     vue = new QGraphicsView(scene);
-    scene -> setSceneRect(0, 0, 800, 600);
-    vue -> setRenderHint(QPainter::Antialiasing); // QPainter::Antialiasing c'est pour pas que ce soit flou (de ce que j'ai compris MDRRRR)
+    scene->setSceneRect(0, 0, 800, 600);
+    vue->setRenderHint(QPainter::Antialiasing);
 
     layoutBoutons = new QVBoxLayout();
     monReseau = new reseau();
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &fenetreTramway::tickSimulation);
+    // On a retiré le timer->start(33) ici pour qu'il ne se lance qu'au clic du bouton !
 
     boutonSimulation = new QPushButton("▶ Démarrer Simulation", this);
-    boutonSimulation -> setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;");
+    boutonSimulation->setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;");
     connect(boutonSimulation, &QPushButton::clicked, this, &fenetreTramway::toggleSimulation);
-    layoutBoutons -> addWidget(boutonSimulation);
+    layoutBoutons->addWidget(boutonSimulation);
 
     boutonNoms = new QPushButton("Masquer les noms", this);
     connect(boutonNoms, &QPushButton::clicked, this, &fenetreTramway::toggleNomsArrets);
-    layoutBoutons -> addWidget(boutonNoms);
+    layoutBoutons->addWidget(boutonNoms);
 
+    // --- NOUVEAU : LÉGENDE DES ÉTATS ---
+    layoutBoutons->addSpacing(20); // Petit espace visuel
+
+    QLabel *titreLegende = new QLabel("<b>Légende des états :</b>", this);
+    layoutBoutons->addWidget(titreLegende);
+
+    QLabel *legendeRoule = new QLabel("<span style='color:green; font-size:16px;'>■</span> En circulation", this);
+    layoutBoutons->addWidget(legendeRoule);
+
+    QLabel *legendeArret = new QLabel("<span style='color:orange; font-size:16px;'>■</span> À l'arrêt (Station)", this);
+    layoutBoutons->addWidget(legendeArret);
+
+    QLabel *legendeUrgence = new QLabel("<span style='color:red; font-size:16px;'>■</span> Arrêt d'urgence", this);
+    layoutBoutons->addWidget(legendeUrgence);
+
+    // On prépare le layout global
     layoutPrincipal = new QHBoxLayout(this);
-    layoutPrincipal -> addLayout(layoutBoutons);
-    layoutPrincipal -> addWidget(vue);
+    layoutPrincipal->addLayout(layoutBoutons);
+    layoutPrincipal->addWidget(vue);
 
     setWindowTitle("Simulation Réseau Tramway");
     resize(950, 650);
-    layoutBoutons->addStretch();
+    layoutBoutons->addStretch(); // Pousse tout vers le haut
 
     chargerReseau();
 }
@@ -149,60 +167,96 @@ void fenetreTramway::chargerReseau() {
 }
 
 void fenetreTramway::tickSimulation() {
-    std::vector<tramway*> listeComplete = monReseau->getTramways();
 
-    for (tramway* tramway : listeComplete) {
-        // On donne la liste complète au tramway pour qu'il calcule sa sécurité
-        tramway->mettreAjourPosition(listeComplete);
+    // 1. Création d'une liste contenant UNIQUEMENT les tramways des lignes cochées (optimisation)
+    std::vector<tramway*> tramsActifs;
+    for (tramway* t : monReseau->getTramways()) {
+        if (t->getLigne()->estVisible()) {
+            tramsActifs.push_back(t);
+        }
+    }
+
+    // 2. Mise à jour de tous les tramways
+    for (tramway* tramway : monReseau->getTramways()) {
+
+        bool ligneVisible = tramway->getLigne()->estVisible();
+
         if (mapTramsVisuels.contains(tramway)) {
             QGraphicsRectItem* carre = mapTramsVisuels.value(tramway);
 
+            // On cache le carré si la ligne a été décochée
+            carre->setVisible(ligneVisible);
+
+            // Si la ligne est masquée, on passe au tram suivant sans faire de calculs
+            if (!ligneVisible) continue;
+
+            // On met à jour la position en lui donnant SEULEMENT les trams visibles (anti-collision)
+            tramway->mettreAjourPosition(tramsActifs);
+
+            // --- NOUVEAU : GESTION DES COULEURS DE CONTOUR ---
+            QPen contour;
+            contour.setWidth(2); // Épaisseur du liseré
+
+            if (tramway->getArretActuel() != nullptr) {
+                contour.setColor(QColor("orange")); // À l'arrêt (Station)
+            } else if (tramway->getVitesseActuelle() == 0) {
+                contour.setColor(Qt::red);          // Arrêt d'urgence (bloqué par un autre tram)
+            } else {
+                contour.setColor(Qt::green);        // En circulation normale
+            }
+            carre->setPen(contour);
+
+            // --- CALCUL DES COORDONNÉES X ET Y ---
             int x, y;
 
-            if (tramway -> getArretActuel()) {
-                x = tramway -> getArretActuel() -> getX();
-                y = tramway -> getArretActuel() -> getY();
+            if (tramway->getArretActuel()) {
+                x = tramway->getArretActuel()->getX();
+                y = tramway->getArretActuel()->getY();
             } else {
-                arret *arretPrecedant = tramway -> getArretPrecedent(), *arretSuivant = tramway -> getArretSuivant();
+                arret *arretPrecedant = tramway->getArretPrecedent();
+                arret *arretSuivant = tramway->getArretSuivant();
 
-                if (arretPrecedant && arretSuivant && tramway -> getDistanceTotaleSegment() > 0) {
-                    // Ici , pourcentageDistanceParcourue c'est le % que le tram a parcouru entre deux arrets, on l'utilise pour les petits carrés dans la simulation, on les utilise pour avoir x et y
-                    double pourcentageDistanceParcourue = (double)(tramway -> getDistanceTotaleSegment() - tramway -> getDistanceRestante()) / tramway -> getDistanceTotaleSegment();
+                if (arretPrecedant && arretSuivant && tramway->getDistanceTotaleSegment() > 0) {
+                    double pourcentageDistanceParcourue = (double)(tramway->getDistanceTotaleSegment() - tramway->getDistanceRestante()) / tramway->getDistanceTotaleSegment();
 
-                    x = arretPrecedant -> getX() + (arretSuivant -> getX() - arretPrecedant -> getX()) * pourcentageDistanceParcourue;
-                    y = arretPrecedant -> getY() + (arretSuivant -> getY() - arretPrecedant -> getY()) * pourcentageDistanceParcourue;
-                } else continue;
+                    x = arretPrecedant->getX() + (arretSuivant->getX() - arretPrecedant->getX()) * pourcentageDistanceParcourue;
+                    y = arretPrecedant->getY() + (arretSuivant->getY() - arretPrecedant->getY()) * pourcentageDistanceParcourue;
+                } else {
+                    continue; // Sécurité si données manquantes
+                }
             }
-            carre -> setRect(x - 6, y - 6, 12, 12);
+
+            // Mise à jour de la position du carré sur la carte
+            carre->setRect(x - 6, y - 6, 12, 12);
         }
     }
-    scene->update();
+    scene->update(); // On redessine tout à la fin
 }
 
 void fenetreTramway::toggleSimulation() {
-    if (timer -> isActive()) {
+    if (timer->isActive()) {
         // 1. ON MET EN PAUSE
-        timer -> stop();
-        boutonSimulation -> setText("▶ Démarrer Simulation");
-        boutonSimulation -> setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;");
+        timer->stop();
+        boutonSimulation->setText("▶ Démarrer Simulation");
+        boutonSimulation->setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold; padding: 10px;");
 
-        // On réactive toutes les cases à cocher
+        // On réactive toutes les cases à cocher pour modifier l'affichage
         for (QCheckBox* cb : lignesGraphiquesMap.keys()) {
             cb->setEnabled(true);
         }
-
     } else {
-        // 2. ON DÉMARRE
-        timer -> start(33); // 33 ms = ~30 IPS
-        boutonSimulation -> setText("⏸ Mettre en Pause");
-        boutonSimulation -> setStyleSheet("background-color: #f44336; color: white; font-weight: bold; padding: 10px;");
+        // 2. ON DÉMARRE LA SIMULATION
+        timer->start(33); // 33 ms = ~30 IPS
+        boutonSimulation->setText("⏸ Mettre en Pause");
+        boutonSimulation->setStyleSheet("background-color: #f44336; color: white; font-weight: bold; padding: 10px;");
 
-        // On désactive toutes les cases à cocher (elles seront grisées)
+        // On grise/désactive toutes les cases à cocher pendant que ça roule
         for (QCheckBox* cb : lignesGraphiquesMap.keys()) {
             cb->setEnabled(false);
         }
     }
 }
+
 void fenetreTramway::toggleNomsArrets() {
     nomsVisibles = !nomsVisibles;
     boutonNoms -> setText(nomsVisibles ? "Masquer les noms" : "Afficher les noms");
