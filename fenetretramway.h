@@ -23,7 +23,7 @@
 #include "reseau.h"
 #include "tramway.h"
 
-// Structure pour lier le dessin du point et son texte
+// Structure pour regrouper les éléments graphiques d'un arrêt (le rond et son étiquette textuelle)
 struct ArretVisuel {
     QGraphicsEllipseItem* cercle;
     QGraphicsTextItem* texte;
@@ -38,40 +38,42 @@ public:
     ~fenetreTramway();
 
 private slots:
-    void toggleNomsArrets();
-    void toggleLigneVisibility(bool checked);
-    void toggleSimulation(); // Pour le bouton Démarrer/Pause
-    void tickSimulation();   // La fonction appelée toutes les secondes par le QTimer
-    void resetSimulation();
+    void onNomsArrets();                    // Affiche/Cache le nom des arrêts sur la carte
+    void afficherCacherLigne(bool checked); // Affiche/Cache une ligne spécifique (en cochant un case)
+    void onSimulation();                    // Gère le basculement du bouton Démarrer/Pause
+    void tickSimulation();                  // Moteur de la simulation : fait avancer les trams à chaque "tic"
+    void renitialiserSimulation();          //
 
 private:
-    void majVisibiliteArrets();
-    void chargerReseau();
+    // --- FONCTIONS INTERNES ---
+    void majVisibiliteArrets();             // Met à jour l'affichage selon les lignes actives
+    void chargerReseau();                   // Lit les fichiers .txt et construit le réseau
 
-    QGraphicsScene *scene; // Pour l'affichage graphique a gauche des boutons
-    QGraphicsView *vue; // Pour l'affichage graphique a gauche des boutons
+    // --- ARCHITECTURE GRAPHIQUE ---
+    QGraphicsScene *d_scene;                // stocke et gère les coordonnées logiques des objets
+    QGraphicsView *d_vue;                   // le widget physique intégré à la fenêtre qui affiche la scène
 
-    QHBoxLayout *layoutPrincipal;
-    QVBoxLayout *layoutBoutons;
+    // --- MISE EN PAGE DE LA FENÊTRE (Layouts) ---
+    QHBoxLayout *layoutPrincipal;           //
+    QVBoxLayout *d_layoutBoutons;           //
 
-    QPushButton *boutonNoms;
-    QPushButton *boutonSimulation;
-    bool nomsVisibles;
+    // --- ÉLÉMENTS D'INTERFACE ---
+    QPushButton *d_boutonVisibiliteNoms;    //
+    QPushButton *d_boutonSimulation;        //
+    QPushButton *d_boutonReset;             //
+    bool d_nomsVisibles;                    // Mémorise l'état actuel de l'affichage du texte
 
-    // --- Variables pour la simulation ---
-    QTimer *timer;
-    reseau *monReseau;
+    // --- MOTEUR DE SIMULATION ---
+    QTimer *d_timer;                        // Le chronomètre qui cadence l'animation
+    reseau *d_monReseau;                    // Le "cerveau" mathématique contenant toutes les données (lignes, trams)
 
-    // --- Dictionnaires pour gérer l'affichage dynamique et la lecture ---
-    // Les QMap stockent les x,y de ce que j'ai compris
-    QMap<QString, arret*> indexArrets;
-    QMap<arret*, ArretVisuel> mapArretsVisuels;
-    QMap<QCheckBox*, QList<QGraphicsLineItem*>> lignesGraphiquesMap;
-    QMap<QCheckBox*, QList<arret*>> arretsParLigneMap;
+    // --- DICTIONNAIRES (QMap) : Pour lier la logique (données) au visuel (dessins) ---
+    QMap<QString, arret*> d_indexArrets;                    // Lie le nom d'un arrêt (ex: "Gare") à son objet logique (arret*)
+    QMap<arret*, ArretVisuel> d_mapArretsVisuels;           // Lie un arrêt logique à ses dessins sur la carte (rond + texte)
 
-    // Pour lier un objet tramway logique à son petit carré
-    QMap<tramway*, QGraphicsRectItem*> mapTramsVisuels;
+    QMap<QCheckBox*, QList<QGraphicsLineItem*>> d_lignesGraphiquesMap; // Lie une case à cocher aux rails dessinés à l'écran
+    QMap<QCheckBox*, QList<arret*>> d_arretsParLigneMap;               // Lie une case à cocher à la liste de ses arrêts logiques
 
-    QPushButton* boutonReset;
+    QMap<tramway*, QGraphicsRectItem*> d_mapTramsVisuels;   // Lie un tramway logique (calculs) à son petit carré coloré
 };
 #endif // FENETRETRAMWAY_H
