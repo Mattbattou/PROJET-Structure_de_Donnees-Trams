@@ -83,7 +83,7 @@ void fenetreTramway::chargerReseau() {
     // ==========================================
     // --- 1. CHARGEMENT DES ARRÊTS ---
     // ==========================================
-    QFile fichierArrets("arrets.txt");
+    QFile fichierArrets(":/arrets.txt");
     if (fichierArrets.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream flux(&fichierArrets);
         while (!flux.atEnd()) {
@@ -109,7 +109,7 @@ void fenetreTramway::chargerReseau() {
     // ==========================================
     // --- 2. CHARGEMENT DES LIGNES ---
     // ==========================================
-    QFile fichierLignes("lignes.txt");
+    QFile fichierLignes(":/lignes.txt");
     if (fichierLignes.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream flux(&fichierLignes);
         while (!flux.atEnd()) {
@@ -154,7 +154,7 @@ void fenetreTramway::chargerReseau() {
     // ==========================================
     // --- 3. CHARGEMENT DES TRAMWAYS ---
     // ==========================================
-    QFile fichierTrams("tramways.txt");
+    QFile fichierTrams(":/tramways.txt");
     if (fichierTrams.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream flux(&fichierTrams);
         while (!flux.atEnd()) {

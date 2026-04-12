@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>arrets.txt</file>
+        <file>lignes.txt</file>
+        <file>tramways.txt</file>
+    </qresource>
+</RCC>
