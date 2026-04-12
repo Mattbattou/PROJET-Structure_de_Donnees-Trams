@@ -1,12 +1,10 @@
 #include "ligne.h"
 #include <iostream>
 
-// --- Constructeur ---
-ligne::ligne(string nom, string couleur)
-    : d_nom(nom), d_couleur(couleur), d_premierArret(nullptr), d_estVisible(true)
+ligne::ligne(string nom, string couleur) :
+    d_nom{nom}, d_couleur{couleur}, d_premierArret{nullptr}, d_estVisible{true}
 {}
 
-// --- Destructeur ---
 ligne::~ligne()
 {
     NoeudArret* courant = d_premierArret;
@@ -17,7 +15,6 @@ ligne::~ligne()
     }
 }
 
-// --- Insérer un élément ---
 void ligne::insererArretFin(arret* nouvelArret, int distancePrecedent)
 {
     // Création du nouveau maillon
@@ -45,7 +42,6 @@ void ligne::insererArretFin(arret* nouvelArret, int distancePrecedent)
     }
 }
 
-// --- Chercher un élément ---
 arret* ligne::chercherArret(string nomArret)
 {
     NoeudArret* courant = d_premierArret;
@@ -58,7 +54,6 @@ arret* ligne::chercherArret(string nomArret)
     return nullptr; // Non trouvé
 }
 
-// --- Supprimer un élément ---
 void ligne::supprimerArret(string nomArret)
 {
     if (d_premierArret == nullptr) return;
@@ -106,6 +101,14 @@ bool ligne::estVisible() {
     return d_estVisible;
 }
 
-string ligne::getNom() { return d_nom; }
-string ligne::getCouleur() { return d_couleur; }
-NoeudArret* ligne::getPremierArret() { return d_premierArret; }
+string ligne::getNom() {
+    return d_nom;
+}
+
+string ligne::getCouleur() {
+    return d_couleur;
+}
+
+NoeudArret* ligne::getPremierArret() {
+    return d_premierArret;
+}
