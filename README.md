@@ -1,93 +1,38 @@
-# 🚋 Simulation de Gestion d'un Réseau de Tramways
-Ce projet a pour objectif de développer un programme simulant un réseau de tramways de la manière la plus réaliste possible, incluant la modélisation du réseau, la simulation des déplacements et une visualisation graphique.
+# Simulateur de Réseau de Tramways
 
+## Description Générale
+Ce projet est une application logicielle développée en C++ ayant pour but de modéliser, simuler et visualiser le fonctionnement d'un réseau de transport en commun de manière réaliste. L'objectif principal est de concevoir un système capable de gérer le trafic de multiples rames sur un réseau complexe, tout en restituant son état en temps réel via une interface graphique interactive.
 
-# 🚋 Simulateur de Réseau de Tramways
+Le développement s'articule autour de trois composants majeurs : une architecture de données robuste pour la modélisation du réseau, un moteur calculant la physique et la logique de la simulation, et un module de rendu visuel.
 
-Projet de développement en C++ simulant un réseau de tramways de façon réaliste, avec affichage graphique via la bibliothèque Qt. Projet réalisé en groupe de 4 étudiants sur 6 semaines.
+## Fonctionnalités et Logique de Simulation
 
-## 📊 État d'avancement du projet
+### 1. Moteur de Simulation et Comportement
+Le cœur du programme repose sur une simulation temporelle discrète (mise à jour par intervalles stricts d'une seconde). Le moteur gère de manière autonome :
+* **La cinématique des rames :** La vitesse des tramways est binaire (soit nulle lors d'un arrêt, soit à sa vitesse maximale de croisière).
+* **Les règles de sécurité :** Implémentation d'un système d'anti-collision empêchant deux rames de se percuter ou de se dépasser, en imposant une distance de sécurité minimale sur les voies.
+* **La logique de trajet :** Gestion des temps d'arrêt obligatoires en station et inversion automatique du sens de circulation aux terminus des lignes.
 
-### 🏗️ Structures de Données & Architecture
-* ✅ **Architecture Orientée Objet :** Tout le code (sauf la boucle principale) est encapsulé dans des classes.
-* ✅ **Listes chaînées (Obligatoire) :** Implémentées pour relier les arrêts d'une ligne.
-* ✅ **Tableaux dynamiques :** Utilisés pour stocker les éléments globaux.
-* ✅ **Gestion de la mémoire :** Utilisation optimale des allocations et libérations (`delete`) pour éviter les fuites.
-* ❌ **Piles et Files :** Structures suggérées par le sujet, à intégrer si pertinent.
-* ❌ **Stockage des Trams par Ligne :** La structure de chaque Ligne DOIT contenir la liste des tramways qui y sont placés. *(Actuellement stocké uniquement dans le réseau global).*
+### 2. Modélisation et Configuration
+* **Topologie dynamique :** Le réseau n'est pas codé en dur. Les lignes, les arrêts et les distances qui les séparent sont générés à partir du chargement de fichiers de configuration éditables.
+* **Gestion des croisements :** Le système est capable de gérer l'affichage de lignes distinctes partageant un même tronçon ou une même station.
 
-### 📂 Gestion des Fichiers et Console
-* ✅ **Chargement multiple :** Les informations sont chargées à partir d'un ou plusieurs fichiers.
-* ✅ **Format éditable :** Fichiers éditables facilement à la main.
-* ❌ **Menu Console (Mode Texte) :** Le programme doit démarrer par une boucle principale en mode texte.
-* ❌ **Minuteur global :** Demander à l'utilisateur la durée de la simulation via la console. La fenêtre Qt s'ouvre ensuite, puis se ferme automatiquement au bout du temps défini.
+### 3. Interface Graphique (GUI)
+* L'interface est entièrement développée avec le framework **Qt**.
+* Elle offre une représentation en deux dimensions (2D) du réseau, dessinant les voies sous forme de segments géométriques et animant les rames en temps réel au fil de la simulation.
 
-### 🎨 Interface Graphique (Qt)
-* ✅ **Affichage en temps réel :** Visualisation de la simulation avec Qt.
-* ✅ **Dessin du réseau :** Les arrêts nécessitent des coordonnées 2D, les voies sont des segments de droite.
-* ✅ **Représentation des tramways :** Représentés graphiquement par des petits carrés.
-* ✅ **Croisements (Facultatif) :** Gérer l'affichage lorsque deux lignes passent par les mêmes arrêts.
+## Architecture Technique et Contraintes
 
-### ⚙️ Moteur de Simulation
-* ✅ **Intervalle de temps :** La simulation se fait par intervalle de 1 seconde (arrêt/départ aux arrêts, déplacement).
-* ✅ **Vitesse binaire :** La vitesse des tramways est soit nulle, soit égale à sa vitesse maximale.
-* ❌ **Initialisation stricte :** Au lancement, tous les tramways doivent obligatoirement être placés aux arrêts.
-* ❌ **Données dynamiques du Tramway :** Chaque tramway doit stocker son temps passé à l'arrêt OU la distance le séparant de l'arrêt suivant, ainsi que son sens de déplacement.
-* ❌ **Distance de sécurité :** Un tramway doit s'arrêter entre deux arrêts si la distance minimale avec le tramway de devant n'est pas respectée.
-* ❌ **Anti-dépassement :** Les tramways ne peuvent en aucun cas se dépasser.
-* ❌ **Gestion des Terminus :** La direction de déplacement des tramways doit changer aux terminus.
+Ce projet a été réalisé avec un fort niveau d'exigence concernant l'optimisation et la structure du code :
 
-### 📝 Livrables et Évaluation (À préparer)
-* ❌ **Rapport de projet :** Doit expliquer l'interface, l'organisation du programme (avec schéma/organigramme), les choix d'organisation, et définir la contribution de chaque étudiant.
-* ❌ **Qualité du code :** Évaluation sur l'implémentation, l'optimisation des boucles et parcours de tableaux.
-* ❌ **Soutenance orale :** Présentation PowerPoint de 10 minutes + 20 minutes de questions.
-* ❌ **Démonstration :** Une démonstration du programme en direct sera exigée lors de la soutenance.
+* **Paradigme :** Programmation Orientée Objet (POO) stricte en C++. L'ensemble de la logique (à l'exception de la boucle principale d'exécution) est encapsulé dans des classes.
+* **Structures de Données :** Utilisation obligatoire de listes chaînées pour la modélisation séquentielle des arrêts d'une ligne, couplées à des tableaux dynamiques, piles et files pour la gestion globale du trafic.
+* **Gestion de la Mémoire :** Les allocations dynamiques de pointeurs (`new`) sont rigoureusement contrôlées et libérées (`delete`) afin de prévenir toute fuite de mémoire (memory leak) lors des cycles de simulation prolongés.
+* **Dépendances :** Bibliothèque `Qt` pour l'interface utilisateur, bibliothèques standards `<windows.h>` et `<time.h>` pour la gestion des boucles temporelles.
 
-## 📋 Description du Projet
-L'application permet de charger, simuler et visualiser un réseau de transport en commun complexe. Le projet se divise en trois axes principaux :
+## Prérequis et Lancement
+* **Environnement de développement :** Visual Studio, Code::Blocks ou Qt Creator.
+* **Compilation :** Le projet nécessite un compilateur C++ standard (GCC/MinGW ou MSVC) et la liaison avec les bibliothèques Qt (Core, Gui, Widgets).
 
-
-Modélisation : Gestion des lignes, des arrêts et des tramways via des structures de données spécifiques.
-
-
-Simulation : Gestion du trafic en temps réel (déplacements, arrêts, vitesse).
-
-
-Visualisation : Affichage graphique 2D de l'état du réseau.
-
-## ✨ Fonctionnalités Principales
-
-Configuration flexible : Chargement des données du réseau (lignes, arrêts, distances) à partir de fichiers externes modifiables.
-
-Simulation réaliste :
-
-Mise à jour par intervalles de 1 seconde.
-
-Gestion des vitesses (max ou nulle) et temps d'arrêt obligatoires.
-
-Respect des règles de sécurité : distance minimale entre rames et interdiction de dépassement.
-
-Gestion des terminus (changement de sens).
-
-Interface Graphique (GUI) :
-
-Visualisation en temps réel avec la bibliothèque Qt.
-
-Représentation des voies (segments) et des tramways (carrés mobiles).
-
-## 🛠️ Contraintes Techniques
-
-Langage & Outils : C++ (implémentation de classes), Visual Studio ou Code::Blocks.
-
-Structures de données : Utilisation obligatoire de listes chaînées, ainsi que tableaux dynamiques, piles et files.
-
-Gestion mémoire : Allocation et libération dynamique des pointeurs optimisée.
-
-Bibliothèques :
-
-- Qt pour l'affichage graphique.
-
-- windows.h et time.h pour la gestion du temps.
-
-## 👥 Auteurs
-Projet réalisé par une équipe de 4 étudiants dans le cadre du module "Structures de Données".
+---
+*Projet académique réalisé par un groupe de 4 étudiants dans le cadre de la validation du module universitaire "Structures de Données".*
