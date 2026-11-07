@@ -1,5 +1,7 @@
 # Simulateur de Réseau de Tramways
 
+<img width="1079" height="653" alt="Capture d&#39;écran 2026-11-07 140210" src="https://github.com/user-attachments/assets/0339538b-95dd-4403-a7a5-7241b59feadc" />
+
 ## Description Générale
 Ce projet est une application logicielle développée en C++ ayant pour but de modéliser, simuler et visualiser le fonctionnement d'un réseau de transport en commun de manière réaliste. L'objectif principal est de concevoir un système capable de gérer le trafic de multiples rames sur un réseau complexe, tout en restituant son état en temps réel via une interface graphique interactive.
 
